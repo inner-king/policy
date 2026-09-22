@@ -1,0 +1,11 @@
+# 외부 가중치, BEHAVIOR 데이터(재배포 금지), 실행 산출물은 커밋하지 않는다. runs/ 아래는 run.yaml 만 추적한다.
+/models/
+/data/
+/behavior/
+/omnigibson/
+/vla/
+/groot/
+/docs/
+/runs/**
+!/runs/**/
+!/runs/**/run.yaml
