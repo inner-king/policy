@@ -1,0 +1,30 @@
+# 이 실행이 무엇이었는지의 단일 출처. 표·문서의 수치는 여기서 유도된다.
+# 공개 저장소용 사본: 셋업(무엇을 어떻게 돌렸는지)만 남겼다. 결과 수치는 GitHub issue 에 따로 올린다.
+id: pi07ll-pi05base-30k-at30k-thawing_frozen_food-ll-hl-smoke1
+kind: eval
+stack: pi07
+task: thawing_frozen_food
+status: done
+date: '2026-09-19'
+policy:
+  ll: runs/train/pi07ll-pi05base-30k/checkpoints/step-030000
+  hl: runs/train/pi07hl-pi05base-8k/checkpoints/step-008000
+  wm: none
+serving:
+  server: src/pi07/serve_pi07.py
+  exec_steps: 25
+  denoise_steps: 5
+  hl_period_steps: 30
+  wm_period_s: 4
+  meta_cfg: 0
+protocol:
+  mode: public_test
+  sim_gpu: 0
+  server_gpu: 0
+  instances: "0"
+  max_steps: harness default
+  env_wrapper: b1k_wrappers.RGBFullResWrapper
+launcher: src/pi07/run_eval.sh
+results: json/
+note: >-
+  배관 확인용 스모크 1 롤아웃 (서버가 결정 기록을 남기기 전 코드). 본 평가는 ...-ll-hl 과 ...-ll 이다.

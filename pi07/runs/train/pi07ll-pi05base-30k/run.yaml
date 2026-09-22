@@ -1,0 +1,34 @@
+# 이 실행이 무엇이었는지의 단일 출처. 표·문서의 수치는 여기서 유도된다.
+# 공개 저장소용 사본: 셋업(무엇을 어떻게 돌렸는지)만 남겼다. 결과 수치는 GitHub issue 에 따로 올린다.
+id: pi07ll-pi05base-30k
+kind: train
+stack: pi07
+task: 18 tasks (17 cooking + clean_a_keyboard)
+status: done
+date: '2026-09-18'
+base_model: models/pi05_base (lerobot/pi05_base, openpi π0.5 base 의 PyTorch 포트)
+max_steps: 30000
+launcher: src/pi07/launch.sh pi07ll-pi05base-30k 0 ll 30000 --micro-batch 16 --accum 2 --goal-per-micro 4 --warmup 1000 --workers 5 --save-every 1000 --val-every 2000 --milestone 10000
+unit: systemd --user pi07ll-pi05base-30k (GPU0, MemoryMax 18G, MemorySwapMax 8G, Restart=on-failure)
+desc: >-
+  π0.7 재현의 저수준 VLA. π0.5 base 에 π0.7 컨텍스트(Task/Subtask/Speed/Quality/Mistake/Control Mode
+  + 서브골 3뷰)를 드롭아웃과 함께 학습. VLM 동결, action expert(430M) 만 학습.
+dataset: data/pi07 (src/pi07/build_index.py) — 3,420 train / 180 val 에피소드, 37,860,087 프레임
+effective_batch: 32            # 마이크로배치 16 × 누적 2. 마이크로배치마다 서브골 예시 4개 (25%)
+optimizer: AdamW(0.9, 0.95, wd 0.01), lr 2.5e-5 → 2.5e-6 cosine, warmup 1000, grad clip 1.0
+action_horizon: 50
+image_size: 224
+denoise_steps_inference: 5
+state: 25-dim (groot r1pro 부분집합), π0.5 식 256구간 텍스트 토큰
+normalization: q01/q99 → [-1, 1] (data/pi07/stats.json, train 분할 2M 프레임)
+prompt_dropout: >-
+  서브골 25% 예시에만 (구간 끝 25% / 0~4초 뒤 75%). 서브골 있는 예시에서 subtask 30% 제거,
+  없는 예시에서 10% 제거. 메타데이터 통째 15%, 항목별 5%. control mode 는 드롭 없음.
+deviations_from_paper: >-
+  (1) VLM 동결 (π0.7 은 KI 로 VLM 을 FAST CE 학습). (2) 백본 PaliGemma 3B (π0.7 은 Gemma3 4B + MEM
+  비디오 인코더 + 860M expert). (3) 이력 프레임 없음. (4) 학습 시 RTC 없음 — 평가 하네스가 추론 동안
+  시뮬레이터를 멈추므로 지연이 없다. (5) Quality=5·Mistake=false 상수 — B1K 데모에 해당 라벨이 없다.
+  (6) 생성 서브골 혼합 없음 (월드 모델 학습 후 단계). (7) state 는 선형 투영이 아니라 π0.5 식 이산 토큰.
+throughput_smoke: 2.5–3.3 s/step (3090 Ti), GPU 16.8 GB, 메인 RssAnon 1.6 GB + 워커 5개 Pss 1.9 GB
+finished: '2026-09-19'          # 16:48:49 UTC 마지막 검증 · 체크포인트 step-030000
+wall_clock_h: 28.0              # 09-18 12:49 → 09-19 16:48, 크래시 재시작 0

@@ -1,0 +1,36 @@
+# 이 실행이 무엇이었는지의 단일 출처. 표·문서의 수치는 여기서 유도된다.
+# 런처(run_eval_client.sh)가 당시 run.yaml 을 쓰지 않아 2026-09-20 에 로그·trace·json 에서 사후 작성했다.
+# 공개 저장소용 사본: 셋업(무엇을 어떻게 돌렸는지)만 남겼다. 결과 수치는 GitHub issue 에 따로 올린다.
+id: pi07ll-pi05base-30k-at30k-clean_a_keyboard-ll
+kind: eval
+stack: pi07
+task: clean_a_keyboard
+status: done
+date: '2026-09-20'
+policy:
+  ll: runs/train/pi07ll-pi05base-30k/checkpoints/step-030000
+  hl: none — 태스크 문장만 (플랫 기준선)
+  wm: none
+serving:
+  server: src/pi07/serve_pi07.py (공유 서버 pi07-serve, 포트 8011 = HL 끔. 서버 GPU 번호는 로그에 남지 않았다)
+  exec_steps: 25
+  denoise_steps: 5
+  hl_period_steps: 30
+  hl_decoding: 태스크별 학습 subtask 문장 트라이 제약
+  meta: "Speed: 2500 (태스크 15 백분위). Quality: 5. Mistake: false. Control Mode: joint."
+protocol:
+  mode: public_test
+  instances: "0-9 (인스턴스 301-310) 전부 로컬 머신(시뮬 GPU0 3090 Ti, 관측 전체 해상도 → 서버에서 224 면적 축소). 원격 평가 노드 미사용"
+  max_steps: 5815                # 하네스 기본값 = 사람 데모 평균 3,876 스텝 × 1.5 (로그의 설정값 5814, 실행 스텝 5,815)
+  env_wrapper: b1k_wrappers.RGBFullResWrapper
+desc: >-
+  π0.7 재현 LL 30k 단독(태스크 문장만, 플랫 기준선) · clean_a_keyboard · public_test 0-9
+launcher: src/pi07/run_eval_client.sh (로컬)
+results: json/
+note: >-
+  조건 A(ll-hl) 를 13:37~14:40 UTC 에, 조건 B(ll) 를 14:40~15:36 UTC 에 같은 머신·같은 인스턴스로 순차 실행했다.
+  LL 프롬프트 기록은 trace/conn02_<HOST>/ep*.jsonl.
+finished: '2026-09-20'          # 14:40~15:36 UTC
+caveat: >-
+  공개 분할 20개 중 10개(인덱스 0-9)만 돌렸으므로 공식 태스크 점수가 아니다.
+  프롬프트 형식(Subtask 항 없음)은 학습 표본의 15%에만 있었다.
