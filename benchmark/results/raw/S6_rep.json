@@ -1,0 +1,73 @@
+{
+ "name": "S6_rep",
+ "cmd": [
+  "python",
+  "-m",
+  "omnigibson.eval.eval",
+  "--task-name",
+  "turning_on_radio",
+  "--mode",
+  "public_test",
+  "--instance-indices",
+  "0",
+  "--policy",
+  "local",
+  "--max-steps",
+  "300",
+  "--no-write-video",
+  "--env-wrapper",
+  "omnigibson.eval.wrappers.RGBDFullResWrapper",
+  "--output-dir",
+  "./eval_out"
+ ],
+ "returncode": 0,
+ "wall_s": 121.1,
+ "marks": {},
+ "stats": [],
+ "baseline": {
+  "sys_used_mb": 2600.5859375,
+  "gpu_mem_mb": 78.0,
+  "swap_mb": 156.5
+ },
+ "overall": {
+  "duration_s": 120.6,
+  "rss_mb_max": 16164.3,
+  "root_rss_mb_max": 7012.6,
+  "pss_mb_max": 7303.7,
+  "sys_used_delta_mb_max": 6382.3,
+  "swap_delta_mb_max": 0.0,
+  "gpu_mem_delta_mb_max": 8205.0,
+  "gpu_proc_mb_max": 8164.0,
+  "cpu_cores_avg": 6.54,
+  "cpu_cores_max": 12.8,
+  "gpu_util_avg": 30.19,
+  "gpu_util_max": 100.0,
+  "gpu_power_w_avg": 53.44,
+  "gpu_power_w_max": 121.7,
+  "threads_max": 296,
+  "nprocs_max": 27
+ },
+ "phases": {
+  "start->exit": {
+   "duration_s": 120.6,
+   "rss_mb_max": 16164.3,
+   "root_rss_mb_max": 7012.6,
+   "pss_mb_max": 7303.7,
+   "sys_used_delta_mb_max": 6382.3,
+   "swap_delta_mb_max": 0.0,
+   "gpu_mem_delta_mb_max": 8205.0,
+   "gpu_proc_mb_max": 8164.0,
+   "cpu_cores_avg": 6.54,
+   "cpu_cores_max": 12.8,
+   "gpu_util_avg": 30.19,
+   "gpu_util_max": 100.0,
+   "gpu_power_w_avg": 53.44,
+   "gpu_power_w_max": 121.7,
+   "threads_max": 296,
+   "nprocs_max": 27
+  }
+ },
+ "disk_read_mb_total": 0.0,
+ "disk_write_mb_total": 0.0,
+ "peak_gpu_proc_mb": 8164.0
+}
