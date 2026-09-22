@@ -10,6 +10,10 @@
 - [자원 사용량](https://github.com/inner-king/policy/wiki/Resource-Usage)
 - [문제 해결](https://github.com/inner-king/policy/wiki/Troubleshooting)
 
+실험별 코드와 설정은 하위 디렉토리에 있고, 결과는 [이슈](https://github.com/inner-king/policy/issues)로 올립니다.
+
+- [π0.7 재현](pi07/README.md) — HL·LL·월드 모델 학습과 폐루프 평가 ([실험 세팅](pi07/SETTINGS.md))
+
 ## 빠른 시작
 
 ```bash
@@ -47,6 +51,7 @@ scripts/
 benchmark/
   monitor.py, scenario.py, vec_scenario.py   자원 사용량 측정 도구
   results/                                   RTX 3060 12 GB 측정 결과
+pi07/                    π0.7 재현 실험 (코드 · run.yaml · 환경 목록, pi07/README.md)
 ```
 
 설치 후 디렉터리:

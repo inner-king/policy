@@ -1,0 +1,23 @@
+# 이 실행이 무엇이었는지의 단일 출처. 표·문서의 수치는 여기서 유도된다.
+# 공개 저장소용 사본: 셋업(무엇을 어떻게 돌렸는지)만 남겼다. 결과 수치는 GitHub issue 에 따로 올린다.
+id: pi07ll-pi05base-30k-genmix-5k
+kind: train
+stack: pi07
+task: 18 tasks (17 cooking + clean_a_keyboard)
+status: done                 # pi07-stage3 유닛: WM 완료 → 서브골 4,000장 생성(GPU1) → LL 완료 → 이 실행(GPU0)
+date: '2026-09-18'
+base_model: runs/train/pi07ll-pi05base-30k 의 마지막 체크포인트 (학습 파라미터만, 옵티마이저 새로)
+max_steps: 5000
+launcher: >-
+  systemd-run --user --unit=pi07-stage3 --working-directory=$CAPSTONE -p Restart=on-failure -p RestartSec=300 -p MemoryMax=16G bash src/pi07/stage3.sh
+  → launch.sh pi07ll-pi05base-30k-genmix-5k 0 ll 5000 --init-from runs/train/pi07ll-pi05base-30k/checkpoints/step-030000
+  --gen-goal-dir data/pi07/gen_subgoals/pi07wm-flux2kleinbase-6k --p-gen 0.5 --lr 1e-5 --final-lr 2.5e-6 --warmup 200
+  --micro-batch 16 --accum 2 --goal-per-micro 4 --workers 5 --save-every 1000 --val-every 1000 --milestone 5000
+desc: >-
+  π0.7 VI-C 의 생성 서브골 혼합. 서브골 예시(배치의 25%) 중 절반을 월드 모델이 만든 이미지로 바꿔
+  LL 을 추가 학습한다 — 학습 때는 실제 미래 프레임, 런타임에는 생성 이미지를 보는 불일치를 줄이는 단계.
+generated_subgoals: >-
+  train 분할 균등 (에피소드, t) 4,000개, WM 마지막 체크포인트, 12 스텝 CFG 4.0, 뷰당 224.
+  3090 에서 장당 약 4.3 s (4스텝 시험 0.69 장/s 에서 추정) → 약 4.8 h. 재개 가능 (done.npy).
+effective_batch: 32
+optimizer: AdamW(0.9, 0.95, wd 0.01), lr 1e-5 → 2.5e-6 cosine, warmup 200
