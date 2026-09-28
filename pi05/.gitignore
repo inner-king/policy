@@ -1,0 +1,11 @@
+# openpi clone, BEHAVIOR 데이터(재배포 금지), 체크포인트, 실행 산출물은 커밋하지 않는다.
+# 코드 루트는 src/ 이고 아래 폴더는 전부 실행하면서 src/ 안에 생긴다. runs/ 아래는 run.yaml 만 추적한다.
+/src/third_party/
+/src/data/
+/src/checkpoints/
+/src/outputs/
+/src/assets/
+/src/logs/
+/runs/**
+!/runs/**/
+!/runs/**/run.yaml

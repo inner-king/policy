@@ -15,6 +15,7 @@ main 에는 실험별 개요와 세팅 문서만 두고, 각자의 코드는 개
 | 실험 | 문서 | 코드 |
 |---|---|---|
 | π0.7 재현 — HL·LL·월드 모델 학습과 폐루프 평가 | [개요](pi07/README.md) · [실험 세팅](pi07/SETTINGS.md) | [`hanbin5/pi07`](https://github.com/inner-king/policy/tree/hanbin5/pi07/pi07) |
+| π0.5 요리 스킬 정책 — 스킬 문장으로 동작을 고르는 파인튜닝과 폐루프 평가 | [개요](pi05/README.md) · [실험 세팅](pi05/SETTINGS.md) | [`ers345/pi05`](https://github.com/inner-king/policy/tree/ers345/pi05/pi05) |
 
 ## 빠른 시작
 
@@ -54,6 +55,7 @@ benchmark/
   monitor.py, scenario.py, vec_scenario.py   자원 사용량 측정 도구
   results/                                   RTX 3060 12 GB 측정 결과
 pi07/                    π0.7 재현 실험의 개요·세팅 문서 (코드는 hanbin5/pi07 브랜치)
+pi05/                    π0.5 요리 스킬 정책 실험의 개요·세팅 문서 (코드는 ers345/pi05 브랜치)
 AGENTS.md                저장소 운영 규약 (main·개인 브랜치·이슈)
 ```
 
