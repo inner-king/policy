@@ -1,0 +1,26 @@
+# 이 실행이 무엇이었는지의 단일 출처. 표·문서의 수치는 여기서 유도된다.
+id: dm05base-b1k-smoke
+kind: eval
+stack: dm05
+task: clean_a_keyboard
+status: done                    # 결과는 이슈로 (저장소 규약)
+date: '2026-09-27'
+purpose: 배관 확인 — DM0.5 base(R1Pro 미학습)를 공식 평가 러너에 붙여 로봇이 명령대로 움직이는지만 본다. 과제 성공은 기대하지 않는다
+policy:
+  model: models/dm05 (Dexmal/DM05 rev 5cd18734, 파인튜닝 없음)
+  robot_type: DOS W1
+  control_mode: joint
+  speed: '0.5'
+  prompt: "Push the chair under the desk, pick up the duster brush, and wipe the dust off the keyboard with the brush."
+serving:
+  model_server: opendm/script/dm05_launcher.sh --task inference (GPU1, :7891, chunk 50, 14차원, 이미지 Head/Left wrist/Right wrist)
+  bridge: src/opendm/serve_dm05_b1k.py (:8040, exec_steps 25) — R1Pro 23 ↔ DM0.5 14 매핑은 파일 docstring
+  trace: trace.jsonl
+protocol:
+  mode: public_test
+  sim_gpu: 0
+  instances: "0"
+  max_steps: 600
+  env_wrapper: b1k_wrappers.RGBFullResWrapper
+launcher: src/pi07/run_eval_client.sh — 브랜치 hanbin5/pi07 에 있다 (TASK=clean_a_keyboard HOST=127.0.0.1 CONDS=8040:dm05base-b1k-smoke MAX_STEPS=600)
+results: json/
