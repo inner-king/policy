@@ -1,0 +1,23 @@
+# pi05 학습 실행 기록 — 무엇을 어떻게 돌렸는지만 적는다. 결과는 이슈에 있다.
+run_id: pi05v4-run7-21k
+original_name: run8          # 원래 저장소의 실행 이름. 체크포인트 경로는 <설정>/<run>/<스텝>
+config: pi05_cooking_top20_v4        # src/configs/cooking_config.py (v4)
+init_weights: pi05_cooking_top20_v3/run7/25999/params
+init_weights_env: COOKING_INIT_PARAMS   # 이 환경변수로 경로를 넘긴다. 옵티마이저 상태는 새로 시작한다
+steps: 21000
+batch_size: 32
+seed: 47
+optimizer: {type: AdamW, b1: 0.9, b2: 0.95, eps: 1.0e-8, weight_decay: 1.0e-10, clip_gradient_norm: 1.0}   # openpi 기본값
+lr_schedule: {type: cosine, warmup_steps: 1000, peak_lr: 1.0e-4, decay_steps: 21000, decay_lr: 5.0e-6}
+ema_decay: 0.99
+num_flow_samples: 8
+instructions: 20  # TOP20, 상한 10만
+hardware: Colab A100 80GB, XLA_PYTHON_CLIENT_MEM_FRACTION=0.97 (VRAM 최대 73.9 GiB)
+sec_per_step: 3.5
+wallclock: 기록 없음
+checkpoint_used: pi05_cooking_top20_v4/run8/18000  # 20999 는 목차 파일이 빠져 열리지 않는다
+command: 기록 없음  # 인자 구성은 README '학습' 의 명령과 같고, 값은 위 필드와 같다
+notes:
+  - v3 대비 바꾼 것은 freeze_filter 하나: SigLIP 만 얼리고 Gemma 2B 본체까지 학습 (학습 2,988.6M).
+  - 체크포인트 하나 46.1 GiB. 세션 끝 여유(30분)가 Drive 업로드(약 68분)보다 짧아 마지막 저장을 잃었다.
+  - 저장 간격 인자는 기록 없음 (15000·18000 이 남아 있다).

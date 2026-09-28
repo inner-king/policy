@@ -1,0 +1,27 @@
+# pi05 학습 실행 기록 — 무엇을 어떻게 돌렸는지만 적는다. 결과는 이슈에 있다.
+run_id: pi05v2-pi05base-13k
+original_name: run2          # 원래 저장소의 실행 이름. 체크포인트 경로는 <설정>/<run>/<스텝>
+config: pi05_cooking_top20        # src/configs/cooking_config.py (v2)
+init_weights: π0.5 base (gs://openpi-assets/checkpoints/pi05_base/params)
+steps: 13000
+batch_size: 32
+seed: 기록 없음  # 명령에 없어 기본값 42 로 본다
+optimizer: {type: AdamW, b1: 0.9, b2: 0.95, eps: 1.0e-8, weight_decay: 1.0e-10, clip_gradient_norm: 1.0}   # openpi 기본값
+lr_schedule: {type: cosine, warmup_steps: 1000, peak_lr: 5.0e-5, decay_steps: 13000, decay_lr: 5.0e-6}
+ema_decay: null
+num_flow_samples: 1
+instructions: 20  # TOP20, 상한 없음 (7,270,494 프레임). state 25 / horizon 32 / max_token_len 150
+hardware: Colab A100 80GB
+sec_per_step: 2.9  # 스모크 실측
+wallclock: 약 10.5 h
+checkpoint_used: pi05_cooking_top20/run2/12999
+command: |
+  uv run --project third_party/openpi python scripts/train.py pi05_cooking_top20 \
+    --exp-name=run2 \
+    --batch-size=32 --num-workers=8 \
+    --num-train-steps=13000 --lr-schedule.decay-steps=13000 --lr-schedule.warmup-steps=1000 \
+    --checkpoint-base-dir=<체크포인트 루트> \
+    --keep-period=5000 --save-interval=500 \
+    --project-name=cooking-vla
+notes:
+  - 5,000 스텝 무렵 Colab 디스크가 차서 멈췄고, 체크포인트 위치를 바꾸고 keep-period 13000 으로 재개했다. 로그상 5100 부터 이어졌고 lr 일정도 이어졌다.

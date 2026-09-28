@@ -1,0 +1,22 @@
+# pi05 학습 실행 기록 — 무엇을 어떻게 돌렸는지만 적는다. 결과는 이슈에 있다.
+run_id: pi05v3-run2-12.5k
+original_name: run3          # 원래 저장소의 실행 이름. 체크포인트 경로는 <설정>/<run>/<스텝>
+config: pi05_cooking_top20_v3        # src/configs/cooking_config.py (v3)
+init_weights: pi05_cooking_top20/run2/12999/params
+init_weights_env: COOKING_INIT_PARAMS   # 이 환경변수로 경로를 넘긴다. 옵티마이저 상태는 새로 시작한다
+steps: 12500
+batch_size: 32
+seed: 42
+optimizer: {type: AdamW, b1: 0.9, b2: 0.95, eps: 1.0e-8, weight_decay: 1.0e-10, clip_gradient_norm: 1.0}   # openpi 기본값
+lr_schedule: {type: cosine, warmup_steps: 1000, peak_lr: 5.0e-5, decay_steps: 12500, decay_lr: 5.0e-6}
+ema_decay: 0.99
+num_flow_samples: 8
+instructions: 20  # TOP20, 지시문당 10만 프레임 상한 (1,939,958 프레임)
+hardware: Colab A100 80GB
+sec_per_step: 2.8
+wallclock: 기록 없음
+checkpoint_used: pi05_cooking_top20_v3/run3/12499
+command: 기록 없음  # 인자 구성은 README '학습' 의 명령과 같고, 값은 위 필드와 같다
+notes:
+  - v2 대비 바꾼 것: freeze_filter(action expert 본체 학습 + SigLIP 동결), 청크 위치별 정규화 (32,23), 다표본 흐름 매칭 N=8, EMA 0.99, 지시문당 상한 10만.
+  - 저장 간격 인자는 기록 없음 (학습 결과에는 영향 없음).

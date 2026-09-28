@@ -1,0 +1,30 @@
+# pi05 학습 실행 기록 — 무엇을 어떻게 돌렸는지만 적는다. 결과는 이슈에 있다.
+run_id: pi05v3-run6-26k
+original_name: run7          # 원래 저장소의 실행 이름. 체크포인트 경로는 <설정>/<run>/<스텝>
+config: pi05_cooking_top20_v3        # src/configs/cooking_config.py (v3)
+init_weights: pi05_cooking_top20_v3/run6/25000/params
+init_weights_env: COOKING_INIT_PARAMS   # 이 환경변수로 경로를 넘긴다. 옵티마이저 상태는 새로 시작한다
+steps: 26000
+batch_size: 32
+seed: 46
+optimizer: {type: AdamW, b1: 0.9, b2: 0.95, eps: 1.0e-8, weight_decay: 1.0e-10, clip_gradient_norm: 1.0}   # openpi 기본값
+lr_schedule: {type: cosine, warmup_steps: 1000, peak_lr: 1.0e-4, decay_steps: 26000, decay_lr: 5.0e-6}
+ema_decay: 0.99
+num_flow_samples: 8
+instructions: 20  # TOP20, 상한 10만
+hardware: Colab A100 40GB
+sec_per_step: 기록 없음 (6차와 같은 조건이라 스모크 생략)
+wallclock: 기록 없음
+checkpoint_used: pi05_cooking_top20_v3/run7/25999
+command: |
+  export COOKING_INIT_PARAMS=<체크포인트 루트>/pi05_cooking_top20_v3/run6/25000/params
+  uv run --project third_party/openpi python scripts/train.py pi05_cooking_top20_v3 \
+    --exp-name=run7 \
+    --seed=46 \
+    --batch-size=32 --num-workers=8 \
+    --num-train-steps=26000 --lr-schedule.decay-steps=26000 --lr-schedule.warmup-steps=1000 \
+    --lr-schedule.peak-lr=1e-4 \
+    --checkpoint-base-dir=<체크포인트 루트> \
+    --keep-period=2000 --save-interval=2000
+notes:
+  - 설정은 6차와 같다.

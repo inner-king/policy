@@ -1,0 +1,31 @@
+# pi05 평가 실행 기록 — 무엇을 어떻게 돌렸는지만 적는다. 결과는 이슈에 있다.
+run_id: pi05v5-run9-24k-at24k
+original_name: run10 평가 (eval_chain.sh run10)
+checkpoints:
+  rollout: pi05_cooking_top32_v5/run10/23999      # params + assets (정규화 통계는 체크포인트 안 assets/jiu121/behavior-cooking-top32-v5)
+  language_probe: [pi05_cooking_top32_v5/run10/12000, pi05_cooking_top32_v5/run10/18000, pi05_cooking_top32_v5/run10/23999]
+config: pi05_cooking_top32_v5
+code: 이 브랜치의 src/ 와 같다 (원래 저장소 4c9abe6. 평가 준비 변경을 평가 전에 만들고 평가 뒤 커밋했다)
+command: |
+  setsid nohup bash scripts/eval_chain.sh run10 >> outputs/run10_eval_chain.log 2>&1 < /dev/null &
+  setsid nohup bash scripts/rollout_watchdog.sh >> outputs/run10_eval/watchdog.log 2>&1 < /dev/null &
+stages:
+  - "0: 체크포인트 12000·18000·23999 구조 검사 (verify_checkpoint.py)"
+  - "1: 언어 검사 probe_language.py — 32종 배치 16표본(outputs/probe/batch_pi05_cooking_top32_v5_b16.npz, 9차와 같은 파일), 확산 잡음 jax.random.key(0), CPU"
+  - "2: 대조군 — 무대를 바꾼 놓기 2판(pepper_put_board2, beet_put_board2)만, 정책에 묻지 않는다"
+  - "3: rollout_new12.sh — 신규 12종 12판"
+  - "4: rollout_all20.sh — 기존 20종 21판 (A/B 1판 포함)"
+  - "5: rollout_unseen.sh TIER=all — 계획 13판 중 6판(표현 바꾸기 4 + 처음 보는 물체 2)에서 사용자 결정으로 멈췄다"
+protocol:
+  simulator: OmniGibson (BEHAVIOR-1K v3.9.1), conda env behavior, 부분 장면 로딩
+  scene: 각 데모의 task_instance_id (train 분할)
+  handover: 데모 액션을 스킬 시작 프레임까지 재생한 뒤 정책에 넘긴다
+  prompt: 해당 스킬의 주석 문장 (5단계 표현 바꾸기 판은 바꾼 문장)
+  policy_steps: 2700            # 90초. 데모의 스킬 길이와 무관
+  exec_steps: 16                # 32 스텝 청크 중
+  stop_on_success: false
+  success_hold_steps: 15
+  inference: CPU, 판마다 정책 서버를 새로 띄운다
+  judge: rollout_b1k.py make_success_check (열기·닫기 Open / 켜기 ToggledOn / 집기 is_grasping / 놓기 OnTop·Inside / 자르기)
+  video_review: 정책 구간 영상을 사람이 본다 (판정기보다 우선)
+period: 2026-09-27 ~ 2026-09-28 (노트북 전원이 두 번 꺼져 두 판을 다시 돌렸다)

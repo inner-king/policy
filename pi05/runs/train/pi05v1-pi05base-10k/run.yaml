@@ -1,0 +1,27 @@
+# pi05 학습 실행 기록 — 무엇을 어떻게 돌렸는지만 적는다. 결과는 이슈에 있다.
+run_id: pi05v1-pi05base-10k
+original_name: run1          # 원래 저장소의 실행 이름. 체크포인트 경로는 <설정>/<run>/<스텝>
+config: pi05_cooking        # src/configs/cooking_config.py (v1)
+init_weights: π0.5 base (gs://openpi-assets/checkpoints/pi05_base/params)
+steps: 10000
+batch_size: 32
+seed: 42  # 기본값 (명령에 없음)
+optimizer: {type: AdamW, b1: 0.9, b2: 0.95, eps: 1.0e-8, weight_decay: 1.0e-10, clip_gradient_norm: 1.0}   # openpi 기본값
+lr_schedule: {type: cosine, warmup_steps: 1000, peak_lr: 5.0e-5, decay_steps: 10000, decay_lr: 5.0e-6}
+ema_decay: null
+num_flow_samples: 1
+instructions: 466  # 전체, 상한 없음. state 61 / horizon 50 / max_token_len 280
+hardware: Colab A100 80GB
+sec_per_step: 3.4
+wallclock: 9.4 h (+ 준비 0.2 h)
+checkpoint_used: pi05_cooking/run1/9999
+command: |
+  uv run --project third_party/openpi python scripts/train.py pi05_cooking \
+    --exp-name=run1 \
+    --batch-size=32 --num-workers=8 \
+    --num-train-steps=10000 --lr-schedule.decay-steps=10000 --lr-schedule.warmup-steps=1000 \
+    --checkpoint-base-dir=<체크포인트 루트> \
+    --keep-period=5000 --save-interval=500 \
+    --project-name=cooking-vla
+notes:
+  - v1 은 LoRA 둘 + SigLIP 을 학습한다 (학습 467.0M).

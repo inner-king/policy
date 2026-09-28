@@ -1,0 +1,22 @@
+# pi05 학습 실행 기록 — 무엇을 어떻게 돌렸는지만 적는다. 결과는 이슈에 있다.
+run_id: pi05v3-run3-11.5k
+original_name: run4          # 원래 저장소의 실행 이름. 체크포인트 경로는 <설정>/<run>/<스텝>
+config: pi05_cooking_top20_v3        # src/configs/cooking_config.py (v3)
+init_weights: pi05_cooking_top20_v3/run3/12499/params
+init_weights_env: COOKING_INIT_PARAMS   # 이 환경변수로 경로를 넘긴다. 옵티마이저 상태는 새로 시작한다
+steps: 11500  # 계획 13,500 (마지막 체크포인트의 lr 1.09e-5 로 역산). 브라우저 창을 닫아 둬서 런타임 연결이 끊겼다
+batch_size: 32
+seed: 43
+optimizer: {type: AdamW, b1: 0.9, b2: 0.95, eps: 1.0e-8, weight_decay: 1.0e-10, clip_gradient_norm: 1.0}   # openpi 기본값
+lr_schedule: {type: cosine, warmup_steps: 1000, peak_lr: 1.0e-4, decay_steps: 13500, decay_lr: 5.0e-6}   # decay_steps 는 역산값
+ema_decay: 0.99
+num_flow_samples: 8
+instructions: 20  # TOP20, 상한 10만
+hardware: Colab A100 40GB
+sec_per_step: 기록 없음
+wallclock: 기록 없음
+checkpoint_used: pi05_cooking_top20_v3/run4/11500
+command: 기록 없음  # 인자 구성은 README '학습' 의 명령과 같고, 값은 위 필드와 같다
+notes:
+  - peak lr 1e-4 는 노트북에서 직접 넣었다 (설정 기본값 5e-5).
+  - 저장 간격 인자는 기록 없음.
